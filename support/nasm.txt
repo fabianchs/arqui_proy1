@@ -1,0 +1,6 @@
+nasm -f elf64 -o proyecto_1.o proyecto_1.asm
+
+ld -o proyecto_1-exe proyecto_1.o
+ls
+
+./proyecto_1-exe

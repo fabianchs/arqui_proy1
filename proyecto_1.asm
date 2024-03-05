@@ -1,26 +1,27 @@
-%include "linux64.inc"
+;%include ".../linux64.inc"
+
 section .data
-    filename db "myfile.txt",0
+    filename db "info.txt",0
 
 section .bss
-    text resb 18
+    text resb 36
 
 section .text
     global _start
 
 _start:
     ; Open the file
-    mov rax, SYS_OPEN
-    mov rdi, filename
-    mov rsi, O_RDONLY
-    mov rdx, 0
+    mov rax, SYS_OPEN ; 
+    mov rdi, filename ; puntero al nombre del archivo
+    mov rsi, O_RDONLY ; read only flag
+    mov rdx, 0 ; file permission
     syscall
     ;read from the file
     push rax
     mov rdi, rax
     mov rax, SYS_READ
     mov rsi, text
-    mov rdx, 18
+    mov rdx, 36 ;número de bits a leer en el archivo
     syscall
     ;close the file
     mov rax, SYS_CLOSE
@@ -28,3 +29,4 @@ _start:
     syscall
     print text
     exit
+
