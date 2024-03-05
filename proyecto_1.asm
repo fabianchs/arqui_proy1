@@ -1,5 +1,5 @@
-;%include ".../linux64.inc"
-
+%include "linux64.inc"
+;/home/fabianch/ARQUI/Proyecto_1/proyecto_1.asm
 section .data
     filename db "info.txt",0
 
