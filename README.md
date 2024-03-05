@@ -14,6 +14,8 @@ En primera instancia, se realizó la creación del código para la lectura del a
 
 ### Conclusiones respecto a los ensambladores
 
+-Es notoria la diferencia entre líneas de código que requiere un código realizado en ensamblador en comparación con otros lenguajes de mayor nivel, la lectura de un archivo txt en lenguajes como python requieren de pocas instrucciones, en comparación con la cantidad de líneas que se debe disponer en ensamblador.
+
 ### Referencias Bibliográficas
 
 [1] R. García. "Guía de inicio: Lenguaje ensamblador x86_64 para Linux Parte 1: Ensamblado del primer programa". Instituto Tecnológico de Costa Rica.
