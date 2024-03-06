@@ -2,7 +2,8 @@
 ;/home/fabianch/ARQUI/Proyecto_1/proyecto_1.asm
 section .data
     filename db "info.txt",0
-
+    file_descriptor dq 0 ; Descriptor de archivo
+    buffer_len equ $ - buffer
 section .bss
     text resb 36
 
@@ -23,6 +24,7 @@ _start:
     mov rsi, text
     mov rdx, 36 ;número de bits a leer en el archivo
     syscall
+
     ;close the file
     mov rax, SYS_CLOSE
     pop rdi
