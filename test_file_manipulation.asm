@@ -74,5 +74,34 @@ section.data    ;flags
     OK_Read db "File REad: Ok", NL,0
     Ok_Position db "Positioned in File : OK", NL, 0
 
+section .bss
+    buffer resb bufferLenght
 
+section .text
+    global main
+
+main: 
+    push rbp
+    mov rbp, rsp
+
+;CREATE FILE
+%IF CREATE 
+    mov rdi, fileName
+    call createFile
+    mov qword[FD], rax
+
+    ;WRITE TO FILE 1
+
+    mov rdi, qword[FD]
+    mov rsi, myText1
+    mov rdx, qword[myText1_Len]
+    call writeFile
+    
+    ;CLOSE FILE
+
+    mov rdi, qword[FD]
+    call closeFile
+
+%ENDIF
+    
  
