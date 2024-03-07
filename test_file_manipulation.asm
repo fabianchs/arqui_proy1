@@ -6,6 +6,7 @@
 ;6 read data from a certain position in the file
 ;7 delete the file
 
+
 section.data    ;flags
     CREATE equ 1
     OVERWRITE equ 1
@@ -40,7 +41,7 @@ section.data    ;flags
 
     NL equ 0xa
     bufferLenght equ 64
-    fileName db "hacked.txt",0
+    fileName db "info.txt",0
 
     FD dq 0
 
@@ -65,7 +66,7 @@ section.data    ;flags
     Error_Print db "Error Printing file", NL, 0
     Error_Position db "Error Positioning file", NL, 0
 
-    Ok_Create   db "File created and Opened : OK ", Nl, 0
+    Ok_Create   db "File created and Opened : OK ", NL, 0
     Ok_CLose db "File closed: OK", NL, 0
     Ok_Write db "File Written: OK", NL, 0
     Ok_Open db "File Opened: OK", NL, 0
@@ -164,7 +165,7 @@ main:
     ;write to file at offset
     mov rdi, qword[FD]
     mov rsi, myText4
-    mov rdx qword[myText4_Len]
+    mov rdx, qword[myText4_Len]
     call writeFile
 
     ;Close file
@@ -216,7 +217,7 @@ main:
     call printString
 
     ;close file
-    move rdi, qword[FD]
+    mov rdi, qword[FD]
     call closeFile
 
     %ENDIF
@@ -225,7 +226,7 @@ main:
     ;DElete a file
     ;delete file 
 
-    move rdi, fileName 
+    mov rdi, fileName 
     call deleteFile
 
     %ENDIF
@@ -237,7 +238,7 @@ main:
 
 global readFile
 
-readFile
+readFile:
     mov rax, NR_READ
     syscall 
     cmp rax, 0
@@ -304,7 +305,7 @@ openFile:
     cmp rax, 0
     jl openerror
 
-    mov, rdi Ok_Open
+    mov rdi, Ok_Open
     push rax
     call printString
     pop rax
@@ -391,7 +392,7 @@ createFile:
     ret
 
     createerror:
-    mov  rdi Error_Create
+    mov  rdi, Error_Create
     call printString
     ret
 
@@ -400,7 +401,7 @@ createFile:
 
 global printString
 printString:
-    mov, r12, rdi
+    mov r12, rdi
     mov rdx, 0
     
     strLoop:
@@ -420,6 +421,7 @@ printString:
     mov rax, 1
     mov rdi, 1
     syscall
+
     prtDone:
         ret
 
