@@ -280,7 +280,7 @@ appendFile:
     mov rax, NR_OPEN
     mov rsi, O_READ_WRITE|O_APPEND
     syscall
-    cpm rax, 0
+    cmp rax, 0
     jl appenderror
     mov rdi, Ok_Append
     push rax
@@ -301,7 +301,7 @@ openFile:
     mov rax, NR_OPEN
     mov rsi, O_READ_WRITE
     syscall
-    cpm rax, 0
+    cmp rax, 0
     jl openerror
 
     mov, rdi Ok_Open
@@ -340,7 +340,7 @@ global positionFile
 positionFile:
     mov rax, NR_LSEEK
     syscall
-    cpm rax, 0
+    cmp rax, 0
     jl positionerror
 
     mov rdi, Ok_Position
@@ -349,6 +349,84 @@ positionFile:
     
 
     positionerror:
+    mov rdi, Error_Position
+    call printString
+    ret
+
+;Close file function 
+
+global closeFile
+
+closeFile:
+    mov rax, NR_CLOSE
+    syscall
+    
+    cmp rax, 0
+    jl closeerror
+
+    mov rdi, Ok_CLose
+    call printString
+    ret 
+
+    closeerror:
+    mov rdi, Error_Close
+    call printString
+    ret
+
+;Create file function
+global createFile
+
+createFile:
+    mov rax, NR_CREATE
+    mov rsi, S_USER_READ|S_USER_WRITE
+    syscall
+
+    cmp rax, 0
+    jl createerror
+
+    mov rdi, Ok_Create
+    push rax 
+    call printString
+    pop rax
+    ret
+
+    createerror:
+    mov  rdi Error_Create
+    call printString
+    ret
+
+
+;PRINT FEEDBACK 
+
+global printString
+printString:
+    mov, r12, rdi
+    mov rdx, 0
+    
+    strLoop:
+    cmp byte[r12,0], 0
+    je strDone
+    inc rdx 
+    inc r12
+    jmp strLoop
+
+
+
+    strDone:
+    cmp rdx, 0
+    je prtDone
+
+    mov rsi, rdi
+    mov rax, 1
+    mov rdi, 1
+    syscall
+    prtDone:
+        ret
+
+
+
+
+
 
 
 
