@@ -21,7 +21,7 @@ section.data    ;flags
     NR_WRITE equ 1
     NR_OPEN equ 2
     NR_CLOSE equ 3
-    NR_LSKEED equ 8
+    NR_LSEEK equ 8
     NR_CREATE equ 85
     NR_UNLINK equ 87
 
@@ -44,14 +44,14 @@ section.data    ;flags
 
     FD dq 0
 
-    myText1 "1. Hello Everyone", NL, 0
-    myText1_Len $-myText1-1
-    myText2     "2. My name is fabian!", NL, 0
-    myText2_Len $-myText2-1
-    myText3 "3. THE CODE WORKS", NL, 0
-    myText3_Len $-myText3-1
-    myText4 "4. This code really works", NL, 0
-    myText4_Len $-myText4-1
+    myText1 db "1. Hello Everyone", NL, 0
+    myText1_Len db $-myText1-1
+    myText2   db  "2. My name is fabian!", NL, 0
+    myText2_Len db $-myText2-1
+    myText3 db "3. THE CODE WORKS", NL, 0
+    myText3_Len  db $-myText3-1
+    myText4 db "4. This code really works", NL, 0
+    myText4_Len  db $-myText4-1
 
     ;ERROR MESSAGES DEFINED HERE
 
@@ -105,3 +105,251 @@ main:
 %ENDIF
     
  
+ %IF OVERWRITE
+
+ ;OPEN FILE 
+    mov rdi, fileName
+    call openFile
+    mov qword[FD], rax
+
+    ;WRITE TO FILE #2 OVERWRITE
+
+    mov rdi, qword[FD]
+    mov rsi, myText2
+    mov rdx, myText2_Len
+    call writeFile
+
+    ;CLOSE THE FILE
+    mov rdi, [FD]
+    call closeFile
+
+%ENDIF
+
+%IF APPEND
+
+;OPEN AND APPEND TO A FILE AND THEN CLOSE
+;open file to append
+    mov rdi, fileName
+    call appendFile
+    mov qword[FD], rax
+
+    ;write to a file #3 append
+
+    mov rdi, qword[FD]
+    mov rsi, myText3
+    mov rdx, qword[myText3_Len]
+    call writeFile
+
+    ;close file
+
+    mov rdi, qword[FD]
+    call closeFile
+
+%ENDIF
+
+%IF O_WRITE
+;Open and overwrite at an offset in a file, then close it
+;open file
+
+    mov rdi, fileName
+    call openFile
+    mov qword[FD], rax
+
+    ;position file at offset
+    mov rdi, qword[FD]
+    mov rsi, qword[myText2_Len]
+    mov rdx, 0
+    call positionFile
+
+    ;write to file at offset
+    mov rdi, qword[FD]
+    mov rsi, myText4
+    mov rdx qword[myText4_Len]
+    call writeFile
+
+    ;Close file
+
+    mov rdi, qword[FD]
+    call closeFile
+
+    %ENDIF
+
+%IF READ
+;OPEN AND READ FROM A FILE AND THEN CLOSE IT
+    ;OPEN FILE TO READ  
+    mov rdi, fileName
+    call openFile
+    mov qword[FD], rax
+
+    ;read from a file
+
+    mov rdi, qword[FD]
+    mov rsi, buffer
+    mov rdx, bufferLenght
+    call readFile
+    mov rdi, rax
+    call printString
+    mov rdi, qword[FD]
+    call closeFile
+
+    %ENDIF
+
+%IF O_READ
+    ;open file to read
+    mov rdi, fileName
+    call openFile
+    mov qword[FD], rax
+
+    ;position file at offset
+    
+    mov rdi, qword[FD]
+    mov rsi, qword[myText2_Len]
+    mov rdx, 0
+    call positionFile
+
+    ;read from file 
+    mov rdi, qword[FD]
+    mov rsi, buffer
+    mov rdx, 10
+    call readFile
+    mov rdi, rax
+    call printString
+
+    ;close file
+    move rdi, qword[FD]
+    call closeFile
+
+    %ENDIF
+
+%IF DELETE
+    ;DElete a file
+    ;delete file 
+
+    move rdi, fileName 
+    call deleteFile
+
+    %ENDIF
+
+    leave
+    ret
+
+;+++++++++++++++++++++FILE MANIPULATION FUNCTIONS++++++++
+
+global readFile
+
+readFile
+    mov rax, NR_READ
+    syscall 
+    cmp rax, 0
+    jl readerror
+
+    mov byte[rsi+rax], 0
+    mov rax, rsi
+    mov rdi, OK_Read
+    push rax
+    call printString
+    pop rax
+    ret
+
+readerror:
+    mov rdi, Error_Read
+    call printString
+    ret 
+
+;DELETE file function
+
+global deleteFile
+deleteFile:
+    mov rax, NR_UNLINK
+    syscall 
+    cmp rax, 0
+    jl deleteerror
+    mov rdi, Ok_Delete
+    call printString
+
+deleteerror:        
+    mov rdi, Error_Delete
+    call printString
+    ret
+
+;Append file function
+
+global appendFile
+
+appendFile:
+    mov rax, NR_OPEN
+    mov rsi, O_READ_WRITE|O_APPEND
+    syscall
+    cpm rax, 0
+    jl appenderror
+    mov rdi, Ok_Append
+    push rax
+    call printString
+    pop rax
+    ret
+
+    appenderror:
+    mov rdi, Error_Append
+    call printString
+    ret
+
+;Open file function
+
+global openFile
+
+openFile:
+    mov rax, NR_OPEN
+    mov rsi, O_READ_WRITE
+    syscall
+    cpm rax, 0
+    jl openerror
+
+    mov, rdi Ok_Open
+    push rax
+    call printString
+    pop rax
+    ret
+
+    openerror:
+    mov rdi, Error_Open
+    call printString
+    ret
+
+;Write file function
+
+global writeFile
+writeFile:
+    mov rax, NR_WRITE
+    syscall 
+    cmp rax, 0
+    jl writeerror
+
+    mov rdi, Ok_Write
+    call printString
+    ret
+
+    writeerror:
+    mov rdi, Error_Write
+    call printString
+    ret
+
+;Position file function
+
+global positionFile
+
+positionFile:
+    mov rax, NR_LSEEK
+    syscall
+    cpm rax, 0
+    jl positionerror
+
+    mov rdi, Ok_Position
+    call printString
+    ret 
+    
+
+    positionerror:
+
+
+
+
