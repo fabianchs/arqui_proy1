@@ -1,5 +1,8 @@
 # Proyecto 1 Arquitectura de Computadores
 
+## Dirección al proyecto github
+- https://github.com/fabianchs/arqui_proy1
+
 ## Descripción del diseño de software realizado en el proyecto
 
 - En primera instancia, se realizó la creación del código para la lectura del archivo .txt. Esto con el fin de asegurar la manipulación de los datos dentro del programa. Posteriomente se investigó sobre la manipulación de memoria, algoritmos de sorting, e impresiones sobre línea de comandos.
