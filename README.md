@@ -20,6 +20,7 @@
 ### Conclusiones respecto a los ensambladores
 
 - Es notoria la diferencia entre líneas de código que requiere un código realizado en ensamblador en comparación con otros lenguajes de mayor nivel, la lectura de un archivo txt en lenguajes como python requieren de pocas instrucciones, en comparación con la cantidad de líneas que se debe disponer en ensamblador.
+- El diseñador en ensamblador requiere de conocimientos en la disponibilidad y manejo de memora en las computadoras, del mismo modo del movimiento y activación de ciertos registros para el funcionamiento del programa, en lenguajes de programación como javascript o python no se requiere el conocimiento de este tipo, ya que estos lenguajes lo hacen de manera automática, el no seguimiento de estos factores puede llevar a un error en el programa realizado desde ensamblador.
 
 ### Referencias Bibliográficas
 
